@@ -2,7 +2,7 @@
 name = "hammerfin"
 version = "0.1.0"
 description = "ProjectDescription"
-authors = ["Thomas Kientz <thomas@kientz.net>; Lucas Saban <lucas.saban@ensae.fr"]
+authors = ["Thomas Kientz <thomas@kientz.net>"]
 license = "MIT"
 readme = "README.md"
 
