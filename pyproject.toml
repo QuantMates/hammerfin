@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "hammerfin"
+version = "0.1.0"
+description = "ProjectDescription"
+authors = ["Thomas Kientz <thomas@kientz.net>; Lucas Saban <lucas.saban@ensae.fr"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.24.3"
+pandas = "^2.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
