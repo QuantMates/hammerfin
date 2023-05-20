@@ -56,6 +56,7 @@ disable = """
     import-error,
     too-few-public-methods,
 """
+good-names = "i,j,k,x,y,z,ex,Run,_,e,_E"
 
 [tool.pylint.MASTER]
 ignore-paths = [
