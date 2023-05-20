@@ -1,6 +1,8 @@
 import numpy as np
 from pandas.api.extensions import ExtensionArray, ExtensionDtype
 
+# pylint: disable = missing-function-docstring
+
 
 class CurrencyDtype(ExtensionDtype):
     """
@@ -69,14 +71,14 @@ class CurrencyArray(ExtensionArray):
     def __len__(self):
         return len(self._data)
 
-    def __array__(self, dtype=None):
+    def __array__(self, dtype=None):  # pylint: disable = unused-argument
         return self._data
 
     def isna(self):
         return np.isnan(self._data)
 
     @classmethod
-    def _from_sequence(cls, scalars, dtype=None, copy=False):
+    def _from_sequence(cls, scalars, dtype=None, copy=False):  # pylint: disable = unused-argument
         return cls(scalars, dtype)
 
     @classmethod
@@ -103,7 +105,7 @@ class CurrencyArray(ExtensionArray):
         )
         return self
 
-    def adjust_for_inflation(self, base_year):
+    def adjust_for_inflation(self, base_year):  # pylint: disable = unused-argument
         """
         TODO: Implement this method
         """

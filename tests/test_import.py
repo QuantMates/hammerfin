@@ -1,5 +1,6 @@
 def test_import():
+    """Import test."""
     try:
-        import hammerfin  # noqa: F401
-    except ImportError:
-        raise AssertionError("The package cannot be imported")
+        pass
+    except ImportError as exc:
+        raise AssertionError("The package cannot be imported") from exc
