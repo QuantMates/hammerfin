@@ -1,1 +1,1 @@
-from .currency_dtype import CurrencyArray, CurrencyDtype
+from ._currency import Currency

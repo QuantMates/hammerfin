@@ -1,5 +1,6 @@
 import pandas as pd
 
+from ..dtypes._custom_dtype import CustomDType
 from ._financial_methods import (
     calmar,
     cumulative,
@@ -13,6 +14,15 @@ from ._financial_methods import (
 
 class TableSeries(pd.Series):
     """Overloaded pd.Series class"""
+
+    custom_dtype = None
+
+    def __init__(self, *args, **kwargs):
+        if "dtype" in kwargs:
+            if isinstance(kwargs["dtype"], CustomDType):
+                self.custom_dtype = kwargs["dtype"]
+                kwargs["dtype"] = self.custom_dtype.numpy_dtype
+        super().__init__(*args, **kwargs)
 
     @property
     def _constructor(self):
