@@ -1,9 +1,9 @@
 import numpy as np
 
-from ._custom_dtype import CustomDType
+from ._fin_dtype import FinDType
 
 
-class Currency(CustomDType):
+class Currency(FinDType):
     """Custom dtype for currency values"""
 
     def __init__(self, currency="USD", inflation_adjusted=False, base_inflation_date=None):

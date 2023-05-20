@@ -4,7 +4,7 @@ import numpy as np
 
 
 @dataclass
-class CustomDType:
-    """Base class for custom dtypes"""
+class FinDType:
+    """Base class for HammerFin dtypes"""
 
     numpy_dtype: np.dtype = None
