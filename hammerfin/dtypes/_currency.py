@@ -1,6 +1,6 @@
 import numpy as np
 
-from ._fin_dtype import FinDType
+from ._fin_dtype import FinDType, assert_fin_dtype
 
 
 class Currency(FinDType):
@@ -28,3 +28,15 @@ class Currency(FinDType):
                 and self.base_inflation_date == other.base_inflation_date
             )
         return False
+
+
+def assert_currency_dtype(func):
+    """Assert that the TableSeries has a Currency fin_dtype"""
+
+    @assert_fin_dtype
+    def wrapper(*args, **kwargs):
+        if isinstance(args[0].fin_dtype, Currency):
+            return func(*args, **kwargs)
+        raise TypeError(f"Expected Currency, got {type(args[0])}")
+
+    return wrapper

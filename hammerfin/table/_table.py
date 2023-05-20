@@ -1,6 +1,7 @@
 import pandas as pd
 
-from ..dtypes._custom_dtype import CustomDType
+from ..dtypes._currency import assert_currency_dtype
+from ..dtypes._fin_dtype import FinDType, assert_fin_dtype
 from ._financial_methods import (
     calmar,
     cumulative,
@@ -15,13 +16,13 @@ from ._financial_methods import (
 class TableSeries(pd.Series):
     """Overloaded pd.Series class"""
 
-    custom_dtype = None
+    fin_dtype = None
 
     def __init__(self, *args, **kwargs):
         if "dtype" in kwargs:
-            if isinstance(kwargs["dtype"], CustomDType):
-                self.custom_dtype = kwargs["dtype"]
-                kwargs["dtype"] = self.custom_dtype.numpy_dtype
+            if isinstance(kwargs["dtype"], FinDType):
+                self.fin_dtype = kwargs["dtype"]
+                kwargs["dtype"] = self.fin_dtype.numpy_dtype
         super().__init__(*args, **kwargs)
 
     @property
@@ -33,14 +34,24 @@ class TableSeries(pd.Series):
         return Table
 
     def __str__(self):
-        if self.custom_dtype:
-            return pd.Series(self).__str__() + f"\ncustom_dtype: {self.custom_dtype}"
+        if self.fin_dtype:
+            return pd.Series(self).__str__() + f"\nfin-dtype: {self.fin_dtype}"
         return pd.Series(self).__str__()
 
     def __repr__(self):
-        if self.custom_dtype:
-            return pd.Series(self).__repr__() + f"\ncustom_dtype: {self.custom_dtype}"
+        if self.fin_dtype:
+            return pd.Series(self).__repr__() + f"\nfin-dtype: {self.fin_dtype}"
         return pd.Series(self).__repr__()
+
+    @assert_fin_dtype
+    def is_fin_dtype(self):
+        """Return True if the TableSeries has a fin_dtype"""
+        return True
+
+    @assert_currency_dtype
+    def is_currency_dtype(self):
+        """Return True if the TableSeries is a Currency fin_dtype"""
+        return True
 
     sharpe = sharpe
     calmar = calmar
