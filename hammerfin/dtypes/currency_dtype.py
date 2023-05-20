@@ -3,11 +3,37 @@ from pandas.api.extensions import ExtensionArray, ExtensionDtype
 
 
 class CurrencyDtype(ExtensionDtype):
+    """
+    A custom pandas dtype for currency data.
+
+    Attributes
+    ----------
+    type : type
+        The type of the data, which is float.
+    kind : str
+        The kind of the data, which is "f" for float.
+    name : str
+        The name of the dtype, which is "currency".
+    """
+
     type = float
     kind = "f"
     name = "currency"
 
     def __init__(self, currency="USD", inflation_adjusted=False, base_year=None):
+        """
+        Initialize the CurrencyDtype.
+
+        Parameters
+        ----------
+        currency : str, optional
+            The currency of the data. Default is "USD".
+        inflation_adjusted : bool, optional
+            Whether the data is adjusted for inflation. Default is False.
+        base_year : int, optional
+            The base year for inflation adjustment. Default is None.
+        """
+
         self.currency = currency
         self.inflation_adjusted = inflation_adjusted
         self.base_year = base_year
@@ -18,6 +44,17 @@ class CurrencyDtype(ExtensionDtype):
 
 
 class CurrencyArray(ExtensionArray):
+    """
+    A custom pandas ExtensionArray for currency data.
+
+    Attributes
+    ----------
+    _data : numpy.ndarray
+        The underlying data.
+    _dtype : CurrencyDtype
+        The dtype of the data.
+    """
+
     def __init__(self, values, dtype):
         self._data = np.asarray(values, dtype="float")
         self._dtype = dtype
