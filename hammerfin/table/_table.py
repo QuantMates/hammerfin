@@ -32,6 +32,16 @@ class TableSeries(pd.Series):
     def _constructor_expanddim(self):
         return Table
 
+    def __str__(self):
+        if self.custom_dtype:
+            return pd.Series(self).__str__() + f"\ncustom_dtype: {self.custom_dtype}"
+        return pd.Series(self).__str__()
+
+    def __repr__(self):
+        if self.custom_dtype:
+            return pd.Series(self).__repr__() + f"\ncustom_dtype: {self.custom_dtype}"
+        return pd.Series(self).__repr__()
+
     sharpe = sharpe
     calmar = calmar
     sortino = sortino

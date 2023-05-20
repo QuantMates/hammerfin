@@ -12,11 +12,13 @@ class Currency(CustomDType):
         self.base_inflation_date = base_inflation_date
         super().__init__(np.float64)
 
-    def __repr__(self):
-        return f"Currency('{self.currency}', {self.inflation_adjusted}, {self.base_inflation_date})"
-
     def __str__(self):
-        return f"Currency('{self.currency}', {self.inflation_adjusted}, {self.base_inflation_date})"
+        if not self.inflation_adjusted:
+            return f"currency('{self.currency}')"
+        return f"currency('{self.currency}', inflation-base={self.base_inflation_date})"
+
+    def __repr__(self):
+        return self.__str__()
 
     def __eq__(self, other):
         if isinstance(other, Currency):
