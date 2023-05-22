@@ -11,6 +11,20 @@ Welcome to hammerfin's documentation!
    :caption: Contents:
 
 
+.. autosummary::
+     :toctree: stubs
+
+     ~hammerfin.dtypes.currency_dtype.CurrencyDtype
+     ~hammerfin.dtypes.currency_dtype.CurrencyArray
+
+     ~hammerfin.table._financial_methods
+
+
+
+
+
+
+
 
 Indices and tables
 ==================
