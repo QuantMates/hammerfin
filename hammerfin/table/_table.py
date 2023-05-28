@@ -5,7 +5,7 @@ import pandas as pd
 
 from ..dtypes._currency import assert_currency_dtype
 from ..dtypes._fin_dtype import FinDType, assert_fin_dtype
-from ..processing import Scaler
+from ..processing import OneHotEncoder, Scaler
 from ..utils.pandas_loader import load_data
 from ._financial_methods import (
     calmar,
@@ -18,8 +18,6 @@ from ._financial_methods import (
 )
 
 logger = logging.getLogger(__name__)
-
-# pylint: disable=logging-fstring-interpolation, too-many-branches
 
 
 def assert_hf(func):
@@ -203,5 +201,13 @@ class Table(pd.DataFrame):
         scaler = Scaler(*args, **kwargs).fit(self)
         self.processing_steps.append(scaler)
         transformed = scaler.transform(self)
+        self.update(transformed)
+        return self
+
+    def one_hot_encode(self, *args, **kwargs):
+        """One-hot-encode the Table"""
+        one_hot_encoder = OneHotEncoder(*args, **kwargs).fit(self)
+        self.processing_steps.append(one_hot_encoder)
+        transformed = one_hot_encoder.transform(self)
         self.update(transformed)
         return self

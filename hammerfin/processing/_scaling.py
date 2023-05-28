@@ -1,4 +1,8 @@
+import logging
+
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 class Scaler:
@@ -76,7 +80,17 @@ class Scaler:
             if method == "standard":
                 if self.params[col]["std"] != 0:
                     X[col] = (X[col] - self.params[col]["mean"]) / self.params[col]["std"]
+                else:
+                    logger.warning(
+                        f"HammerFin - Scaler - Column '{col}' had standard deviation of 0 during `fit`. "
+                        f"This column will not be changed."
+                    )
             elif method == "minmax":
                 if self.params[col]["max"] != self.params[col]["min"]:
                     X[col] = (X[col] - self.params[col]["min"]) / (self.params[col]["max"] - self.params[col]["min"])
+                else:
+                    logger.warning(
+                        f"HammerFin - Scaler - Column '{col}' had equal max and min values during `fit`. "
+                        f"This column will not be changed."
+                    )
         return X
