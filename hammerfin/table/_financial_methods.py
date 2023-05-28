@@ -5,24 +5,21 @@ __available_indicators__ = ["sharpe", "sortino", "calmar", "max_drawdown"]
 
 
 def assert_ts(func):
-    """Assert that the method is applied to a Table object with datetime index"""
+    """Assert that the method is applied to an object with datetime index"""
 
     def wrapper(*args, **kwargs):
         """Wrapper function for assert_ts"""
-        # pylint: disable = import-outside-toplevel, cyclic-import
-        from ._table import Table, TableSeries
 
-        if not isinstance(args[0], Table) and not isinstance(args[0], TableSeries):
-            raise ValueError("Method can only be applied to Table object")
         if not pd.api.types.is_datetime64_any_dtype(args[0].index):
-            raise ValueError("Method can only be applied to Table with datetime index")
+            raise ValueError("Method can only be applied to an object with datetime index")
         return func(*args, **kwargs)
 
     return wrapper
 
 
 def daily_resampler(self):
-    """Resample to daily frequency and return last value"""
+    """Resample to daily frequency"""
+    print(self.resample("1D").last().fillna(method="ffill"))
     return self.resample("1D").last().fillna(method="ffill")  # if oversampling
 
 

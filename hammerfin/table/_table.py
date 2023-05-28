@@ -21,6 +21,18 @@ logger = logging.getLogger(__name__)
 # pylint: disable=logging-fstring-interpolation, too-many-branches
 
 
+def assert_hf(func):
+    """Assert that the method is applied to a Table or TableSeries object"""
+
+    def wrapper(*args, **kwargs):
+        """Wrapper function for assert_hf"""
+        if not isinstance(args[0], Table) and not isinstance(args[0], TableSeries):
+            raise ValueError("Method can only be applied to a Table or TableSeries object")
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
 class TableSeries(pd.Series):
     """Overloaded pd.Series class"""
 
@@ -61,13 +73,13 @@ class TableSeries(pd.Series):
         """Return True if the TableSeries is a Currency fin_dtype"""
         return True
 
-    sharpe = sharpe
-    calmar = calmar
-    sortino = sortino
-    drawdowns = drawdowns
-    max_drawdown = max_drawdown
-    indicators = indicators
-    cumulative = cumulative
+    sharpe = assert_hf(sharpe)
+    calmar = assert_hf(calmar)
+    sortino = assert_hf(sortino)
+    drawdowns = assert_hf(drawdowns)
+    max_drawdown = assert_hf(max_drawdown)
+    indicators = assert_hf(indicators)
+    cumulative = assert_hf(cumulative)
 
     def as_df(self):
         """Return the TableSeries as a pandas Series"""
@@ -88,34 +100,42 @@ class Table(pd.DataFrame):
     def __init__(
         self,
         data=None,
-        dtype=None,
         copy=False,
-        timeseries=True,
         verbose=False,
-        parse_dates=False,
         **kwargs,
     ):
         if isinstance(data, str):
             data = load_data(data, **kwargs)
             super().__init__(data)
         else:
-            super().__init__(data=data, dtype=dtype, copy=copy, **kwargs)
+            super().__init__(data=data, copy=copy, **kwargs)
 
         self.is_stationnary = False
         self.is_normalized = False
         nb_rows, nb_cols = self.shape
 
         if verbose:
-            print(f"Table has {nb_rows} rows and {nb_cols} columns")
-            print(f"Table has {self.memory_usage().sum()/1e6} MB of memory")
-            print(f"Table columns are {[*self.columns]}")
+            logger.info(f"Table has {nb_rows} rows and {nb_cols} columns")
+            logger.info(f"Table has {self.memory_usage().sum()/1e6} MB of memory")
+            logger.info(f"Table columns are {[*self.columns]}")
             nb_nan = self.isna().sum().sum()
             if nb_nan > 0:
                 logger.warning(f"Table contains {nb_nan} NaN values")
             else:
-                print("Table has no NaN values")
+                logger.info("Table has no NaN values")
 
-        if timeseries and not pd.api.types.is_datetime64_any_dtype(self.index) and parse_dates:
+    def __type__(self):
+        return "Table"
+
+    def __repr__(self):
+        return super().__repr__() + " Table Object"
+
+    def __str__(self):
+        return super().__str__() + " Table Object"
+
+    def find_date(self):
+        """Find the datetime column and set it as index"""
+        if not pd.api.types.is_datetime64_any_dtype(self.index):
             found = False
             for col in self.columns:
                 first_value = self[col][0]
@@ -142,27 +162,12 @@ class Table(pd.DataFrame):
             self.index.name = "date"
             if not found:
                 logger.info("No datetime column found")
+        return self
 
-    def __type__(self):
-        return "Table"
-
-    def __repr__(self):
-        return super().__repr__() + " Table Object"
-
-    def __str__(self):
-        return super().__str__() + " Table Object"
-
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls, *args, **kwargs)
-
-    def as_df(self):
-        """Return the Table as a pandas DataFrame"""
-        return pd.DataFrame(self)
-
-    sharpe = sharpe
-    calmar = calmar
-    sortino = sortino
-    drawdowns = drawdowns
-    max_drawdown = max_drawdown
-    indicators = indicators
-    cumulative = cumulative
+    sharpe = assert_hf(sharpe)
+    calmar = assert_hf(calmar)
+    sortino = assert_hf(sortino)
+    drawdowns = assert_hf(drawdowns)
+    max_drawdown = assert_hf(max_drawdown)
+    indicators = assert_hf(indicators)
+    cumulative = assert_hf(cumulative)
