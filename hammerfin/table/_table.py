@@ -97,6 +97,21 @@ class Table(pd.DataFrame):
     def _constructor_sliced(self):
         return TableSeries
 
+    def __setitem__(self, key, value):
+        if isinstance(value, TableSeries) and value.fin_dtype is not None:
+            dtype_dict = self.__dict__.get("_tableseries_dtypes", {})
+            dtype_dict[key] = value.fin_dtype
+            self.__dict__["_tableseries_dtypes"] = dtype_dict
+        super().__setitem__(key, value)
+
+    def __getitem__(self, item):
+        value = super().__getitem__(item)
+        if isinstance(value, pd.Series):
+            fin_dtype = self.__dict__.get("_tableseries_dtypes", {}).get(item)
+            if fin_dtype is not None:
+                value = TableSeries(value, dtype=fin_dtype)
+        return value
+
     def __init__(
         self,
         data=None,

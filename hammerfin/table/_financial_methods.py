@@ -19,7 +19,6 @@ def assert_ts(func):
 
 def daily_resampler(self):
     """Resample to daily frequency"""
-    print(self.resample("1D").last().fillna(method="ffill"))
     return self.resample("1D").last().fillna(method="ffill")  # if oversampling
 
 
