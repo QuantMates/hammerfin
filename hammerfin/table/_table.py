@@ -5,6 +5,7 @@ import pandas as pd
 
 from ..dtypes._currency import assert_currency_dtype
 from ..dtypes._fin_dtype import FinDType, assert_fin_dtype
+from ..processing import Scaler
 from ..utils.pandas_loader import load_data
 from ._financial_methods import (
     calmar,
@@ -89,6 +90,8 @@ class TableSeries(pd.Series):
 class Table(pd.DataFrame):
     """Overloaded pd.DataFrame class"""
 
+    _metadata = ["processing_steps"]
+
     @property
     def _constructor(self):
         return Table
@@ -119,6 +122,7 @@ class Table(pd.DataFrame):
         verbose=False,
         **kwargs,
     ):
+        self.processing_steps = []
         if isinstance(data, str):
             data = load_data(data, **kwargs)
             super().__init__(data)
@@ -186,3 +190,18 @@ class Table(pd.DataFrame):
     max_drawdown = assert_hf(max_drawdown)
     indicators = assert_hf(indicators)
     cumulative = assert_hf(cumulative)
+
+    def apply_processing(self, X):
+        """Apply processing to another Table"""
+        X = X.copy()
+        for step in self.processing_steps:
+            X = step.transform(X)
+        return X
+
+    def scale(self, method="standard", skip=None):
+        """Scale the Table"""
+        scaler = Scaler(method=method, skip=skip).fit(self)
+        self.processing_steps.append(scaler)
+        transformed = scaler.transform(self)
+        self.update(transformed)
+        return self
