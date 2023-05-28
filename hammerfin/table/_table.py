@@ -198,9 +198,9 @@ class Table(pd.DataFrame):
             X = step.transform(X)
         return X
 
-    def scale(self, method="standard", skip=None):
+    def scale(self, *args, **kwargs):
         """Scale the Table"""
-        scaler = Scaler(method=method, skip=skip).fit(self)
+        scaler = Scaler(*args, **kwargs).fit(self)
         self.processing_steps.append(scaler)
         transformed = scaler.transform(self)
         self.update(transformed)

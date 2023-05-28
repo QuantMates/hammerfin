@@ -1,30 +1,34 @@
 import pandas as pd
 
 
-# pylint: disable=fixme
-# TODO: take method as a dict of column names and methods
 class Scaler:
     """
     Scaler class for normalizing pandas DataFrame.
 
     Parameters
     ----------
-    method : str, optional
-        The method to use for scaling - "standard" or "minmax", by default "standard"
+    method : str or dict, optional
+        The method to use for scaling - "standard" or "minmax", by default "standard".
+        If a dict is provided, it should be of the form `{"column_name": "method"}`.
+        Any column not included will be scaled using the `default_method`.
+        `method`has priority over `default_method`.
+    default_method: str, optional
+        The default method to use for scaling if not provided in the `method` dict, by default "standard"
     skip : list of str, optional
         List of column names to skip while scaling, by default None
     """
 
-    def __init__(self, method="standard", skip=None):
+    def __init__(self, method="standard", default_method="standard", skip=None):
         self.method = method
+        self.default_method = default_method
         self.skip = skip or []
         self.params = {}
 
     def __str__(self):
-        return f"Scaler(method={self.method}, skip={self.skip})"
+        return f"Scaler(method={self.method}, default_method={self.default_method}, skip={self.skip})"
 
     def __repr__(self):
-        return f"Scaler(method={self.method}, skip={self.skip})"
+        return f"Scaler(method={self.method}, default_method={self.default_method}, skip={self.skip})"
 
     def fit(self, X):
         """
@@ -41,9 +45,10 @@ class Scaler:
             if not pd.api.types.is_numeric_dtype(X[col]):
                 self.skip.append(col)
                 continue
-            if self.method == "standard":
+            method = self.method.get(col, self.default_method) if isinstance(self.method, dict) else self.method
+            if method == "standard":
                 self.params[col] = {"method": "standard", "mean": X[col].mean(), "std": X[col].std()}
-            elif self.method == "minmax":
+            elif method == "minmax":
                 self.params[col] = {"method": "minmax", "min": X[col].min(), "max": X[col].max()}
             else:
                 raise ValueError("Scaler method must be 'standard' or 'minmax'")
@@ -67,10 +72,11 @@ class Scaler:
         for col in X.columns:
             if col in self.skip:
                 continue
-            if self.method == "standard":
+            method = self.method.get(col, self.default_method) if isinstance(self.method, dict) else self.method
+            if method == "standard":
                 if self.params[col]["std"] != 0:
                     X[col] = (X[col] - self.params[col]["mean"]) / self.params[col]["std"]
-            elif self.method == "minmax":
+            elif method == "minmax":
                 if self.params[col]["max"] != self.params[col]["min"]:
                     X[col] = (X[col] - self.params[col]["min"]) / (self.params[col]["max"] - self.params[col]["min"])
         return X
