@@ -1,4 +1,4 @@
-from _financial_methods import (
+from ._financial_methods import (
     calmar,
     cumulative,
     drawdowns,

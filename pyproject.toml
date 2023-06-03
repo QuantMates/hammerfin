@@ -58,8 +58,9 @@ disable = """
     missing-module-docstring,
     import-error,
     too-few-public-methods,
+    logging-fstring-interpolation,
 """
-good-names = "i,j,k,x,y,z,ex,Run,_,e,_E"
+good-names = "i,j,k,x,y,z,ex,Run,_,e,_E,X"
 
 [tool.pylint.MASTER]
 ignore-paths = [
